@@ -10,11 +10,11 @@ import { Control } from './Control';
 
 export function TabsManager() {
   const [newPokemons, setNewPokemons] = React.useState(0);
+  const [pokedexUpdate, setPokedexUpdate] = React.useState(false);
 
   return (
     <TabsProvider
       defaultIndex={0}
-    // onChangeIndex={handleChangeIndex} optional
     >
       <Tabs
         style={{ backgroundColor: '#3b4cca', paddingTop: 10 }}
@@ -22,19 +22,26 @@ export function TabsManager() {
         mode="fixed"
       >
         <TabScreen label="Map" >
-          <Map setNewPokemons={setNewPokemons} />
+          <Map
+            setNewPokemons={setNewPokemons}
+            setPokedexUpdate={setPokedexUpdate}
+          />
         </TabScreen>
         <TabScreen
           label="Pokedex"
           badge={newPokemons == 0 ? null : newPokemons}
-          onPress={() => {
-            setNewPokemons(0);
-          }}
+          onPress={() => setNewPokemons(0)}
         >
-          <Pokedex newPokemons={newPokemons} />
+          <Pokedex
+            pokedexUpdate={pokedexUpdate}
+            setPokedexUpdate={setPokedexUpdate}
+          />
         </TabScreen>
         <TabScreen label="Control" >
-          <Control setNewPokemons={setNewPokemons} />
+          <Control
+            setPokedexUpdate={setPokedexUpdate}
+            setNewPokemons={setNewPokemons}
+          />
         </TabScreen>
       </Tabs>
     </TabsProvider>

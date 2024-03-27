@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import * as SQLite from 'expo-sqlite';
 
-const db = SQLite.openDatabase('pokemon.db');
+const db = SQLite.openDatabase('pokemons.db');
 
 export async function getPokemons() {
   return await new Promise((resolve) => {
@@ -10,7 +10,26 @@ export async function getPokemons() {
         'SELECT * FROM Pokemons',
         [],
         (_, { rows }) => {
-          resolve(rows._array);
+          const pokemons = rows._array.map((pokemon) => ({
+            id: pokemon.id,
+            name: pokemon.name,
+            types: JSON.parse(pokemon.types),
+          }));
+          resolve(pokemons);
+        }
+      );
+    });
+  });
+}
+
+export async function isPokemonCaptured(pokemonId) {
+  return await new Promise((resolve) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM Pokemons WHERE id = ?',
+        [pokemonId],
+        (_, { rows }) => {
+          resolve(rows.length > 0);
         }
       );
     });
@@ -18,11 +37,11 @@ export async function getPokemons() {
 }
 
 export async function insertPokemon(pokemonId, name, types) {
-  const jsonTypes = JSON.stringify(types);
+  const jsonTypes = JSON.stringify(types.map(type => type.type.name));
   return await new Promise(() => {
     db.transaction((tx) => {
       tx.executeSql(
-        'INSERT INTO Pokemons (id) VALUES (?)',
+        'INSERT INTO Pokemons (id, name, types) VALUES (?, ?, ?)',
         [pokemonId, name, jsonTypes],
         () => { }
       );
@@ -72,7 +91,7 @@ export const SqliteApiProvider = () => {
       await new Promise(() => {
         db.transaction((tx) => {
           tx.executeSql(
-            'CREATE TABLE IF NOT EXISTS Pokemons (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE)',
+            'CREATE TABLE IF NOT EXISTS Pokemons (id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, name STRING, types STRING)',
             [],
           );
         });

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { deleteDatabase, removeAllPokemons } from '../functions/PokeCatcher';
+import { removeAllPokemons } from '../functions/PokeCatcher';
 
-export const Control = ({ setNewPokemons }) => {
+export const Control = ({ setPokedexUpdate, setNewPokemons }) => {
   return (
     <View>
       <Button
@@ -12,6 +12,7 @@ export const Control = ({ setNewPokemons }) => {
         mode="contained"
         onPress={() => {
           removeAllPokemons();
+          setPokedexUpdate(value => !value);
           setNewPokemons(0);
         }}
       >
