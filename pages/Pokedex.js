@@ -5,9 +5,9 @@ import { getPokemons } from '../functions/PokeCatcher';
 import { PokeIcons } from '../functions/PokeIcons';
 import { PokeModal } from '../components/PokeModal';
 import { fetchFromId } from '../functions/PokemonFetching';
+import { ShareActions } from '../components/ShareAction';
 
 export const Pokedex = ({
-  setNewPokemons,
   pokedexUpdate, setPokedexUpdate
 }) => {
   const [pokemons, setPokemons] = React.useState([]);
@@ -63,6 +63,10 @@ export const Pokedex = ({
           />
         ))}
       </ScrollView>
+      <ShareActions
+        showModal={showModal}
+        setSelectedPokemon={setSelectedPokemon}
+      />
     </>
   );
 }

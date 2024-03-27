@@ -7,6 +7,7 @@ import { Map } from './Map';
 import { Pokedex } from './Pokedex';
 import React from 'react';
 import { Control } from './Control';
+import CameraPage from './CameraPage';
 
 export function TabsManager() {
   const [newPokemons, setNewPokemons] = React.useState(0);
@@ -37,6 +38,11 @@ export function TabsManager() {
             setPokedexUpdate={setPokedexUpdate}
           />
         </TabScreen>
+        {/* <TabScreen */}
+        {/*   label="Camera" */}
+        {/* > */}
+        {/*   <CameraPage /> */}
+        {/* </TabScreen> */}
         <TabScreen label="Control" >
           <Control
             setPokedexUpdate={setPokedexUpdate}
@@ -47,15 +53,3 @@ export function TabsManager() {
     </TabsProvider>
   )
 }
-
-// function ExploreWitHookExamples() {
-//   const goTo = useTabNavigation();
-//   const index = useTabIndex();
-//   return (
-//     <View style={{ flex: 1 }}>
-//       <Title>Explore</Title>
-//       <Paragraph>Index: {index}</Paragraph>
-//       <Button onPress={() => goTo(1)}>Go to Flights</Button>
-//     </View>
-//   );
-// }

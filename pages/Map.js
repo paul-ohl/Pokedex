@@ -63,6 +63,7 @@ export const Map = ({
       <MapView
         style={{ flex: 1 }}
         initialRegion={initPos}
+        showsUserLocation={true}
       >
         {markers.map((marker) => (
           <Marker
