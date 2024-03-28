@@ -1,18 +1,15 @@
 import { CameraView } from "expo-camera/next";
 import React from "react";
 import { FAB } from "react-native-paper";
-import { fetchFromId } from "../functions/PokemonFetching";
 
 export function ShareActions({ showModal, setSelectedPokemon }) {
   const [state, setState] = React.useState({ open: false });
   const onStateChange = ({ open }) => setState({ open });
   const { open } = state;
 
-  const openPokeModal = (id) => {
+  const openPokeModal = (stringifiedData) => {
     showModal();
-    fetchFromId(id).then((pokemon) => {
-      setSelectedPokemon(pokemon);
-    });
+    setSelectedPokemon(JSON.parse(stringifiedData));
   }
 
   return (

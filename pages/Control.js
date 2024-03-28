@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { removeAllPokemons } from '../functions/PokeCatcher';
 
-export const Control = ({ setPokedexUpdate, setNewPokemons }) => {
+export const Control = () => {
+  // const releaseAllPokemons = useReleaseAll();
+
   return (
     <View>
       <Button
@@ -11,12 +12,10 @@ export const Control = ({ setPokedexUpdate, setNewPokemons }) => {
         icon="trash-can"
         mode="contained"
         onPress={() => {
-          removeAllPokemons();
-          setPokedexUpdate(value => !value);
-          setNewPokemons(0);
+          // releaseAllPokemons();
         }}
       >
-        Empty Database
+        Release all pokemons
       </Button>
     </View>
   );

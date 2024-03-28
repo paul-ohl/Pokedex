@@ -1,24 +1,21 @@
 import * as React from 'react';
-import { Image, ScrollView } from 'react-native';
+import { Image, ScrollView, Text } from 'react-native';
 import { List } from 'react-native-paper';
-import { getPokemons } from '../functions/PokeCatcher';
 import { PokeIcons } from '../functions/PokeIcons';
 import { PokeModal } from '../components/PokeModal';
-import { fetchFromId } from '../functions/PokemonFetching';
 import { ShareActions } from '../components/ShareAction';
+import { useGetPokemons } from '../components/ContextProvider.js';
 
-export const Pokedex = ({
-  pokedexUpdate, setPokedexUpdate
-}) => {
-  const [pokemons, setPokemons] = React.useState([]);
+export const Pokedex = () => {
   const [visible, setVisible] = React.useState(false);
   const [selectedPokemon, setSelectedPokemon] = React.useState(null);
+  const [pokemons, setPokemons] = React.useState([]);
+
+  const caughtPokemons = useGetPokemons();
 
   React.useEffect(() => {
-    getPokemons().then((pokemons) => {
-      setPokemons(pokemons);
-    });
-  }, [pokedexUpdate]);
+    setPokemons(caughtPokemons);
+  }, [caughtPokemons]);
 
   const showModal = () => setVisible(true);
   const hideModal = () => {
@@ -32,16 +29,14 @@ export const Pokedex = ({
         hideModal={hideModal}
         visible={visible}
         pokemon={selectedPokemon}
-        setPokedexUpdate={setPokedexUpdate}
       />
       <ScrollView>
+        {pokemons && (pokemons.length == 0) && <Text>Go catch some pokemons!</Text>}
         {pokemons && pokemons.map(pokemon => (
           <List.Item
             onPress={() => {
               showModal();
-              fetchFromId(pokemon.id).then((pokemon) => {
-                setSelectedPokemon(pokemon);
-              });
+              setSelectedPokemon(pokemon);
             }}
             key={pokemon.id}
             title={pokemon.name}

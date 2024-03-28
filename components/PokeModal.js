@@ -1,16 +1,14 @@
 import { Modal, Portal, Button, List, Text, useTheme, FAB } from "react-native-paper";
 import * as React from 'react';
 import { ActivityIndicator, Image, View } from 'react-native';
-import { insertPokemon, isPokemonCaptured, removePokemon } from '../functions/PokeCatcher';
 import { PokeIcons } from '../functions/PokeIcons';
 import QRCode from 'react-native-qrcode-svg';
+import { useGetPokemons, useSetPokemons } from "./ContextProvider.js";
 
 export const PokeModal = ({
   visible,
   hideModal,
   pokemon,
-  setPokedexUpdate,
-  setNewPokemons
 }) => {
   return (
     <Portal>
@@ -18,8 +16,6 @@ export const PokeModal = ({
         {!pokemon && <ActivityIndicator animating={true} size={"large"} />}
         {pokemon &&
           <ModalContent
-            setPokedexUpdate={setPokedexUpdate}
-            setNewPokemons={setNewPokemons}
             hideModal={hideModal}
             pokemon={pokemon}
           />
@@ -29,45 +25,42 @@ export const PokeModal = ({
   );
 }
 
-export const ModalContent = ({ pokemon, setNewPokemons, setPokedexUpdate, hideModal }) => {
+export const ModalContent = ({ pokemon, hideModal }) => {
   const [isCaptured, setIsCaptured] = React.useState(false);
   const theme = useTheme();
   const [displayQrCode, setDisplayQrCode] = React.useState(false);
 
-  const styles = {
-    headlineLarge: {
+  const caughtPokemons = useGetPokemons();
+  const setCaughtPokemons = useSetPokemons();
+
+  React.useEffect(() => {
+    setIsCaptured(caughtPokemons.some(p => p.id === pokemon.id));
+  }, [caughtPokemons])
+
+  return (
+    <View style={{
       padding: 10,
       justifyContent: 'center',
       alignItems: 'center'
-    },
-    text: {
-      marginTop: 5,
-      marginBottom: 5,
-    },
-  };
-
-  isPokemonCaptured(pokemon.id).then((captured) => {
-    setIsCaptured(captured);
-  })
-
-  return (
-    <View style={styles.headlineLarge}>
-      <FAB
-        icon={displayQrCode ? "close" : "share-variant"}
-        accessibilityLabel="Share pokemon"
-        onPress={() => {
-          setDisplayQrCode((prev) => !prev);
-        }}
-        style={{ position: 'absolute', right: 0, top: 0 }}
-      ></FAB>
+    }}>
+      {isCaptured &&
+        <FAB
+          icon={displayQrCode ? "close" : "share-variant"}
+          accessibilityLabel="Share pokemon"
+          onPress={() => {
+            setDisplayQrCode((prev) => !prev);
+          }}
+          style={{ position: 'absolute', right: 0, top: 0 }}
+        ></FAB>
+      }
       {displayQrCode &&
         <QRCode
-          value={pokemon.id.toString()}
+          value={JSON.stringify(pokemon)}
           size={150}
         />}
       {!displayQrCode &&
         <Image
-          source={{ uri: pokemon.sprites.front_default }}
+          source={{ uri: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png` }}
           style={{ width: 150, height: 150 }}
         />
       }
@@ -76,10 +69,10 @@ export const ModalContent = ({ pokemon, setNewPokemons, setPokedexUpdate, hideMo
         style={styles.text}
         title={"Types: "}
         right={() => <>
-          {pokemon.types.map(type =>
+          {pokemon.types.map(typeName =>
             <Image
-              key={type.type.name}
-              source={PokeIcons.types[type.type.name]}
+              key={typeName}
+              source={PokeIcons.types[typeName]}
               style={{ width: 80, height: 30, marginTop: 5, marginRight: 2 }}
             />
           )}
@@ -91,20 +84,23 @@ export const ModalContent = ({ pokemon, setNewPokemons, setPokedexUpdate, hideMo
         mode="contained"
         buttonColor={isCaptured && theme.colors.error}
         onPress={() => {
+          // hideModal();
           if (isCaptured) {
-            removePokemon(pokemon.id);
+            setCaughtPokemons(caughtPokemons.filter(p => p.id !== pokemon.id));
           } else {
-            insertPokemon(pokemon.id, pokemon.name, pokemon.types);
-            if (setNewPokemons) {
-              setNewPokemons((prev) => prev + 1);
-            }
+            setCaughtPokemons([...caughtPokemons, pokemon]);
           }
-          hideModal();
-          setPokedexUpdate((prev) => !prev);
         }}
       >
         {isCaptured ? "Release!" : "Capture!"}
       </Button>
-    </View>
+    </View >
   )
+};
+
+const styles = {
+  text: {
+    marginTop: 5,
+    marginBottom: 5,
+  },
 };

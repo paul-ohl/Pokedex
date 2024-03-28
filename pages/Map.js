@@ -5,10 +5,7 @@ import { PaperProvider, FAB } from 'react-native-paper';
 import { fetchFromId } from '../functions/PokemonFetching';
 import { PokeModal } from '../components/PokeModal';
 
-export const Map = ({
-  setNewPokemons,
-  setPokedexUpdate
-}) => {
+export const Map = ({ setNewPokemons }) => {
   const [visible, setVisible] = React.useState(false);
   const [markers, setMarkers] = useState([]);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
@@ -24,7 +21,7 @@ export const Map = ({
   async function initializePokemons() {
     setLoading(true);
     const newMarkers = [];
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 5; i++) {
       const randLat = Math.random() * initPos.latitudeDelta * 2 + (initPos.latitude - initPos.latitudeDelta);
       const randLng = Math.random() * initPos.longitudeDelta * 2 + (initPos.longitude - initPos.longitudeDelta);
       const randomId = Math.floor(Math.random() * 151) + 1;
@@ -57,7 +54,6 @@ export const Map = ({
         hideModal={hideModal}
         pokemon={selectedPokemon}
         setNewPokemons={setNewPokemons}
-        setPokedexUpdate={setPokedexUpdate}
         visible={visible}
       />
       <MapView
@@ -71,7 +67,11 @@ export const Map = ({
             image={{ uri: marker.pokemon.sprites.front_default }}
             coordinate={marker.coordinates}
             onPress={() => {
-              setSelectedPokemon(marker.pokemon);
+              setSelectedPokemon({
+                id: marker.pokemon.id,
+                name: marker.pokemon.name,
+                types: marker.pokemon.types.map((type) => type.type.name)
+              });
               showModal()
             }}
           />

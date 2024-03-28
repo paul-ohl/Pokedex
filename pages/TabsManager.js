@@ -5,13 +5,18 @@ import {
 } from 'react-native-paper-tabs';
 import { Map } from './Map';
 import { Pokedex } from './Pokedex';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Control } from './Control';
-import CameraPage from './CameraPage';
+import { useGetPokemons } from '../components/ContextProvider.js';
 
 export function TabsManager() {
-  const [newPokemons, setNewPokemons] = React.useState(0);
-  const [pokedexUpdate, setPokedexUpdate] = React.useState(false);
+  // const pokemons = useGetPokemons();
+  // const [seenPokemons, setSeenPokemons] = React.useState(pokemons.length);
+  // let unseenPokemons = pokemons.length - seenPokemons;
+
+  // useEffect(() => {
+  //   unseenPokemons = pokemons.length - seenPokemons;
+  // }, [pokemons.length]);
 
   return (
     <TabsProvider
@@ -23,31 +28,17 @@ export function TabsManager() {
         mode="fixed"
       >
         <TabScreen label="Map" >
-          <Map
-            setNewPokemons={setNewPokemons}
-            setPokedexUpdate={setPokedexUpdate}
-          />
+          <Map />
         </TabScreen>
         <TabScreen
           label="Pokedex"
-          badge={newPokemons == 0 ? null : newPokemons}
-          onPress={() => setNewPokemons(0)}
+          // badge={unseenPokemons <= 0 ? null : unseenPokemons}
+          onPress={() => { }}
         >
-          <Pokedex
-            pokedexUpdate={pokedexUpdate}
-            setPokedexUpdate={setPokedexUpdate}
-          />
+          <Pokedex />
         </TabScreen>
-        {/* <TabScreen */}
-        {/*   label="Camera" */}
-        {/* > */}
-        {/*   <CameraPage /> */}
-        {/* </TabScreen> */}
         <TabScreen label="Control" >
-          <Control
-            setPokedexUpdate={setPokedexUpdate}
-            setNewPokemons={setNewPokemons}
-          />
+          <Control />
         </TabScreen>
       </Tabs>
     </TabsProvider>
